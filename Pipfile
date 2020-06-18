@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+ipdb = "*"
+aiohttp-devtools = "*"
+v = {editable = true,version = "*"}
+
+[packages]
+aiohttp = "*"
+pathlib = "*"
+
+[requires]
+python_version = "3.7"
