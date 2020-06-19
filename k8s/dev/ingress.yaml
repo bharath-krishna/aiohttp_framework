@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: aiohttp-framework
+  namespace: default
+spec:
+  rules:
+    - host: aiohttp.vpshost.info
+      http:
+        paths:
+          - backend:
+              serviceName: aiohttp-framework
+              servicePort: 8080
+            path: /

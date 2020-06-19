@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: aiohttp-framework
+  name: aiohttp-framework
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aiohttp-framework
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: aiohttp-framework
+    spec:
+      containers:
+      - image: docker.io/krishbharath/aiohttp-framework
+        env:
+        - name: HOST
+          valueFrom:
+            configMapKeyRef:
+              key: host
+              name: aiohttp-framework
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              key: port
+              name: aiohttp-framework
+        name: aiohttp-framework
+        resources: {}
+status: {}
