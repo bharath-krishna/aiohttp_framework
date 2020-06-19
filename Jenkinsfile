@@ -18,10 +18,10 @@ spec:
       name: docker-socket
     resources:
       requests:
-        cpu: 500
-        memory: 512Mi
+        cpu: 800m
+        memory: 1Gi
       limits:
-        cpu: 1000m
+        cpu: 800m
         memory: 1Gi
   restartPolicy: "Never"
   securityContext: {}
