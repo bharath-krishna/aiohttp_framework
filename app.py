@@ -5,11 +5,11 @@ from application.handlers import app
 
 
 parser = argparse.ArgumentParser(description="aiohttp framework")
-parser.add_argument('--host')
-parser.add_argument('--port')
+# parser.add_argument('--host')
+# parser.add_argument('--port')
 
 logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    web.run_app(app, host=args.host, port=args.port, access_log_format="{'status': '%s'}")
+    web.run_app(app)
