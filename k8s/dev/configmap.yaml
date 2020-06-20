@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  gunicorn_reload: "true"
+  gunicorn_bind: 0.0.0.0:8080
+  gunicorn_workers: "1"
+  gunicorn_loglevel: debug
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: aiohttp-framework
