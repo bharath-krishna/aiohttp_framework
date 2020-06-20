@@ -20,15 +20,25 @@ spec:
       containers:
       - image: docker.io/krishbharath/aiohttp-framework
         env:
-        - name: HOST
+        - name: GUNICORN_RELOAD
           valueFrom:
             configMapKeyRef:
-              key: host
+              key: gunicorn_reload
               name: aiohttp-framework
-        - name: PORT
+        - name: GUNICORN_BIND
           valueFrom:
             configMapKeyRef:
-              key: port
+              key: gunicorn_bind
+              name: aiohttp-framework
+        - name: GUNICORN_WORKERS
+          valueFrom:
+            configMapKeyRef:
+              key: gunicorn_workers
+              name: aiohttp-framework
+        - name: GUNICORN_LOGLEVEL
+          valueFrom:
+            configMapKeyRef:
+              key: gunicorn_loglevel
               name: aiohttp-framework
         name: aiohttp-framework
         resources: {}
