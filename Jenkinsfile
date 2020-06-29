@@ -37,6 +37,7 @@ spec:
     string(name: 'APP_NAME', defaultValue: 'aiohttp-framework', description: 'Application name')
     booleanParam(name: 'BUILD', defaultValue: false, description: 'Build Image')
     booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy application')
+    booleanParam(name: 'PUSH', defaultValue: false, description: 'Push image to repository')
   }
   // environment {
   //   K8S_TOKEN = credentials("k8s-default-token")
@@ -63,8 +64,14 @@ spec:
               sh """
                 docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
                 docker build -t $IMAGE .
+              """
+            }
+            if (env.PUSH == true) {
+              sh """
                 docker push $IMAGE
               """
+            } else {
+                echo 'Push image skipped due to condition'
             }
           }
         }
@@ -76,15 +83,13 @@ spec:
       steps {
         container('docker') {
           script {
-            withCredentials([usernamePassword(credentialsId: 'keycloak_client_data', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET')]) {
-              dir("k8s/${params.ENVIRONMENT}") {
-                sh """
-                  kustomize edit set image docker.io/krishbharath/aiohttp-framework=$IMAGE
-                  kustomize build > resource.yaml
-                  kubectl apply -f resource.yaml
-                  kubectl apply -f ingress.yaml
-                """
-              }
+            dir("k8s/${params.ENVIRONMENT}") {
+              sh """
+                kustomize edit set image docker.io/krishbharath/aiohttp-framework=$IMAGE
+                kustomize build > resource.yaml
+                kubectl apply -f resource.yaml
+                kubectl apply -f ingress.yaml
+              """
             }
           }
         }
