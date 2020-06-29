@@ -47,7 +47,7 @@ spec:
     stage ("Checkout") {
       steps {
         container('docker') {
-          git branch: BRANCH_NAME, credentialsId:'github_creds', url: 'https://github.com/bharath-krishna/aiohttp_framework.git'
+          git branch: env.BRANCH_NAME, credentialsId:'github_creds', url: 'https://github.com/bharath-krishna/aiohttp_framework.git'
           script {
             def gitCommitTag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
             IMAGE = "docker.io/krishbharath/${params.APP_NAME}:$gitCommitTag"
