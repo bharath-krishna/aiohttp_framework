@@ -57,6 +57,7 @@ spec:
     }
 
     stage ("Build") {
+      when { expression { env.BUILD == 'true' } }
       steps {
         container('docker') {
           script {
@@ -65,13 +66,13 @@ spec:
                 docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
                 docker build -t $IMAGE .
               """
-            }
-            if (env.PUSH == true) {
-              sh """
-                docker push $IMAGE
-              """
-            } else {
-                echo 'Push image skipped due to condition'
+              if (env.PUSH == true) {
+                sh """
+                  docker push $IMAGE
+                """
+              } else {
+                  echo 'Push image skipped due to condition'
+              }
             }
           }
         }
