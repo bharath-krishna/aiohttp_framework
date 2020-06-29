@@ -35,8 +35,10 @@ spec:
   parameters {
     choice(name: 'ENVIRONMENT', choices: ['dev', 'prod', 'qa'], description: 'Environment Ex. prod, dev, qa...')
     string(name: 'APP_NAME', defaultValue: 'aiohttp-framework', description: 'Application name')
+    string(name: 'BRANCH_NAME', defaultValue: "master", description: 'Deployment branch name')
     booleanParam(name: 'BUILD', defaultValue: false, description: 'Build Image')
     booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy application')
+    booleanParam(name: 'PUSH', defaultValue: false, description: 'Push image to repository')
   }
   // environment {
   //   K8S_TOKEN = credentials("k8s-default-token")
@@ -45,8 +47,7 @@ spec:
     stage ("Checkout") {
       steps {
         container('docker') {
-          checkout scm
-
+          git branch: env.BRANCH_NAME, credentialsId:'github_creds', url: 'https://github.com/bharath-krishna/aiohttp_framework.git'
           script {
             def gitCommitTag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
             IMAGE = "docker.io/krishbharath/${params.APP_NAME}:$gitCommitTag"
@@ -56,6 +57,7 @@ spec:
     }
 
     stage ("Build") {
+      when { expression { env.BUILD == 'true' } }
       steps {
         container('docker') {
           script {
@@ -63,8 +65,14 @@ spec:
               sh """
                 docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
                 docker build -t $IMAGE .
-                docker push $IMAGE
               """
+              if (env.PUSH == true) {
+                sh """
+                  docker push $IMAGE
+                """
+              } else {
+                  echo 'Push image skipped due to condition'
+              }
             }
           }
         }
@@ -76,15 +84,13 @@ spec:
       steps {
         container('docker') {
           script {
-            withCredentials([usernamePassword(credentialsId: 'keycloak_client_data', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET')]) {
-              dir("k8s/${params.ENVIRONMENT}") {
-                sh """
-                  kustomize edit set image docker.io/krishbharath/aiohttp-framework=$IMAGE
-                  kustomize build > resource.yaml
-                  kubectl apply -f resource.yaml
-                  kubectl apply -f ingress.yaml
-                """
-              }
+            dir("k8s/${params.ENVIRONMENT}") {
+              sh """
+                kustomize edit set image docker.io/krishbharath/aiohttp-framework=$IMAGE
+                kustomize build > resource.yaml
+                kubectl apply -f resource.yaml
+                kubectl apply -f ingress.yaml
+              """
             }
           }
         }
