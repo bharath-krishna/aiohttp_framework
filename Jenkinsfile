@@ -35,7 +35,7 @@ spec:
   parameters {
     choice(name: 'ENVIRONMENT', choices: ['dev', 'prod', 'qa'], description: 'Environment Ex. prod, dev, qa...')
     string(name: 'APP_NAME', defaultValue: 'aiohttp-framework', description: 'Application name')
-    string(name: 'BRANCH_NAME', defaultValue: "feature/pipeline_updates", description: 'Deployment branch name')
+    string(name: 'BRANCH_NAME', defaultValue: "master", description: 'Deployment branch name')
     booleanParam(name: 'BUILD', defaultValue: false, description: 'Build Image')
     booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy application')
     booleanParam(name: 'PUSH', defaultValue: false, description: 'Push image to repository')
