@@ -35,6 +35,7 @@ spec:
   parameters {
     choice(name: 'ENVIRONMENT', choices: ['dev', 'prod', 'qa'], description: 'Environment Ex. prod, dev, qa...')
     string(name: 'APP_NAME', defaultValue: 'aiohttp-framework', description: 'Application name')
+    string(name: 'BRANCH_NAME', defaultValue: "feature/pipeline_updates", description: 'Deployment branch name')
     booleanParam(name: 'BUILD', defaultValue: false, description: 'Build Image')
     booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy application')
     booleanParam(name: 'PUSH', defaultValue: false, description: 'Push image to repository')
@@ -46,8 +47,7 @@ spec:
     stage ("Checkout") {
       steps {
         container('docker') {
-          checkout scm
-
+          git branch: BRANCH_NAME, credentialsId:'github_creds', url: 'https://github.com/bharath-krishna/aiohttp_framework.git'
           script {
             def gitCommitTag = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
             IMAGE = "docker.io/krishbharath/${params.APP_NAME}:$gitCommitTag"
